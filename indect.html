@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Covid Datas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+
+
+</head>
+
+<body>
+
+
+    <div class="container3">
+        <h5>All Covid Reports For All Over The World</h5>
+        <div class="col-lg-10 gap-5" style="display: flex;">
+
+
+
+            <div class="card a" id="wractive"><i class="fa fa-tachometer"></i>
+                <h5>Active Cases</h5><span ></span>
+            </div>
+            <div class="card ca" id="wrtotal"><i class="fa fa-th-list"></i>
+                <h5>Total Cases</h5><span ></span>
+            </div>
+            <div class="card d" id="wrdeaths"><i class="fa fa-times"></i>
+                <h5>Total Deaths</h5><span ></span>
+            </div>
+            <div class="card r" id="wrrecovery"><i class="fa fa-check-square-o"></i>
+                <h5>Recovered Cases</h5><span ></span>
+            </div>
+
+
+        </div>
+
+
+        <div class="col-lg-12">
+
+            <div class="continer">
+                <figure class="highcharts-figure">
+                    <div id="container3"></div>
+                    <p class="highcharts-description">
+
+                </figure>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="container">
+        <div class="row gap-5">
+            <div class="col-lg-8">
+
+                <input id="name" class="form-control me-2" type="search" placeholder="Search countries .."
+                    aria-label="Search">
+                <button onclick="serch()" class="btn btn-outline-success">Search</button>
+                <h2>COVID-19 Cases in <span id="country"></span> </h2>
+
+            </div>
+
+
+            <div class="col-lg-10 gap-5" style="display: flex;">
+
+
+
+                <div class="card a"><i class="fa fa-tachometer"></i>
+                    <h5>Active Cases</h5><span id="active"></span>
+                </div>
+                <div class="card ca"><i class="fa fa-th-list"></i>
+                    <h5>Total Cases</h5><span id="cases"></span>
+                </div>
+                <div class="card d"><i class="fa fa-times"></i>
+                    <h5>Total Deaths</h5><span id="death"></span>
+                </div>
+                <div class="card r"><i class="fa fa-check-square-o"></i>
+                    <h5>Recovered Cases</h5><span id="recovered"></span>
+                </div>
+
+
+            </div>
+
+
+            <div class="col-lg-12">
+
+                <div class="continer">
+                    <figure class="highcharts-figure">
+                        <div id="container1"></div>
+                        <p class="highcharts-description">
+                            chart shows the covid case for all of the country
+                        </p>
+                    </figure>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+<script>
+    
+
+
+
+
+fetch(`https://api.covid19api.com/world/total`)
+            .then((response => response.json()))
+            .then((data) => {
+                var l = data.length;
+                console.log(data);
+                console.log(l);
+
+                document.getElementById("wrtotal").innerHTML = data.TotalConfirmed;
+                document.getElementById("wrdeaths").innerHTML = data.TotalDeaths;
+                document.getElementById("wrrecovery").innerHTML = data.TotalRecovered;
+                
+
+var pieColors = (function () {
+  var colors = [],
+    base = Highcharts.getOptions().colors[0],
+    i;
+
+  for (i = 0; i < 10; i += 1) {
+    // Start out with a darkened base color (negative brighten), and end
+    // up with a much brighter color
+    colors.push(Highcharts.color(base).brighten((i - 3) / 7).get());
+  }
+  return colors;
+}());
+
+// Build the chart
+Highcharts.chart('container3', {
+  chart: {
+    plotBackgroundColor: null,
+    plotBorderWidth: null,
+    plotShadow: false,
+    type: 'pie'
+  },
+  title: {
+    text: 'Covid 19 in summery, 2022',
+    align: 'left'
+  },
+  tooltip: {
+    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+  },
+  accessibility: {
+    point: {
+      valueSuffix: '%'
+    }
+  },
+  plotOptions: {
+    pie: {
+      allowPointSelect: true,
+      cursor: 'pointer',
+      colors: pieColors,
+      dataLabels: {
+        enabled: true,
+        format: '<b>{point.name}</b><br>{point.percentage:.1f} %',
+        distance: -50,
+        filter: {
+          property: 'percentage',
+          operator: '>',
+          value: 4
+        }
+      }
+    }
+  },
+  series: [{
+    name: 'Share',
+    data: [
+      { name: 'Total Confirmed', y: data.TotalConfirmed },
+      { name: 'Total death', y: data.TotalDeaths },
+      { name: 'Total recovery  ', y: data.TotalRecovered },
+      
+    ]
+  }]
+})});
+
+
+
+    function serch() {
+        var name = document.getElementById("name")
+        alert("name");
+
+
+        fetch(`https://api.covid19api.com/country/${name.value}`)
+            .then((response => response.json()))
+            .then((data) => {
+                var l = data.length;
+                console.log(data);
+                console.log(l);
+
+                document.getElementById("cases").innerHTML = data[l - 1].Confirmed;
+                document.getElementById("active").innerHTML = data[l - 1].Active;
+                document.getElementById("death").innerHTML = data[l - 1].Deaths;
+                document.getElementById("recovered").innerHTML = data[l - 1].Recovered;
+
+
+                // Data retrieved from https://gs.statcounter.com/browser-market-share#monthly-202201-202201-bar
+
+                // Create the chart
+                Highcharts.chart('container1', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        align: 'left',
+                        text: 'Browser market shares. January, 2022'
+                    },
+                    subtitle: {
+                        align: 'left',
+                        text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
+                    },
+                    accessibility: {
+                        announceNewData: {
+                            enabled: true
+                        }
+                    },
+                    xAxis: {
+                        type: 'category'
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Total percent market share'
+                        }
+
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        series: {
+                            borderWidth: 0,
+                            dataLabels: {
+                                enabled: true,
+                                format: '{point.y:.1f}%'
+                            }
+                        }
+                    },
+
+                    tooltip: {
+                        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+                    },
+
+                    series: [
+                        {
+                            name: 'Browsers',
+                            colorByPoint: true,
+                            data: [
+                                {
+                                    name: 'Active Case',
+                                    y: data[l - 1].Active,
+                                    drilldown: 'Active Case'
+                                },
+                                {
+                                    name: 'Recovery Case',
+                                    y: data[l - 1].Recovered,
+                                    drilldown: 'Recovery'
+                                },
+
+                                {
+                                    name: 'Death Case',
+                                    y: data[l - 1].Deaths,
+                                    drilldown: 'Death Case'
+                                },
+                                {
+                                    name: 'Total Tests Deno',
+                                    y: data[l - 1].Confirmed,
+                                    drilldown: 'Total Tests Deno'
+                                },
+                            ]
+                        }
+                    ],
+                });
+
+            });
+
+
+    }
+
+</script>

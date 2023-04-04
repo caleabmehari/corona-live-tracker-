@@ -1,0 +1,44 @@
+
+.card {
+    width: 84%;
+    background: #ccc;
+
+    margin-bottom: 20px;
+    border-radius: 6px;
+    color: #fff;
+}
+.card.a {
+    background: #101010;
+}
+.card.cr {
+    background: #070707;
+}
+.card.r {
+    background: #000000;
+}
+.card.ca {
+    background: #0d0d0d;
+}
+.card.d {
+    background: #000000;
+}
+.card.t {
+    background: #000000;
+}
+
+.card i {
+    font-size: 3rem;
+}
+@media screen and (max-width: 768px){
+  .board {
+    column-count: 2;
+  }
+  .card span {
+    font-size: 2.5rem;
+  }
+}
+@media screen and (max-width: 500px){
+  .board {
+    column-count: 1;
+  }
+}
